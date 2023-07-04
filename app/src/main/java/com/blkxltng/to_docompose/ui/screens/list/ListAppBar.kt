@@ -61,6 +61,7 @@ fun ListAppBar(
                     sharedViewModel.searchAppBarState.value = SearchAppBarState.OPENED
                 },
                 onSortClicked = {
+                    sharedViewModel.persistSortingState(it)
                     sharedViewModel.searchAppBarState.value = SearchAppBarState.CLOSED
                     sharedViewModel.searchTextState.value = ""
                 },
@@ -161,12 +162,6 @@ fun SortAction(
             onClick = {
                 expanded = false
                 onSortClicked(Priority.LOW)
-            })
-        DropdownMenuItem(
-            text = { PriorityItem(priority = Priority.MEDIUM) },
-            onClick = {
-                expanded = false
-                onSortClicked(Priority.MEDIUM)
             })
         DropdownMenuItem(
             text = { PriorityItem(priority = Priority.HIGH) },
