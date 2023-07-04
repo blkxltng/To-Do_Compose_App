@@ -18,4 +18,10 @@
     <string name="title">Title</string>
     <string name="description">Description</string>
     <string name="empty_fields">Title and/or description fields empty</string>
+    <string name="alert_dialog_cta">Yes</string>
+    <string name="alert_dialog_cancel">Cancel</string>
+    <string name="alert_dialog_delete_task">Remove \'%1$s\'?</string>
+    <string name="alert_dialog_delete_task_confirmation">Are you sure you want to remove the task, \'%1$s\'?</string>
+    <string name="alert_dialog_delete_all_tasks">Remove All Tasks?</string>
+    <string name="alert_dialog_delete_all_tasks_confirmation">Are you sure you want to remove the all tasks? This cannot be undone.</string>
 </resources>
