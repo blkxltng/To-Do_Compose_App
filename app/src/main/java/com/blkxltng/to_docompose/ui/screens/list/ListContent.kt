@@ -29,21 +29,44 @@ import com.blkxltng.to_docompose.ui.theme.PRIORITY_INDICATOR_SIZE
 import com.blkxltng.to_docompose.ui.theme.TASK_ITEM_ELEVATION
 import com.blkxltng.to_docompose.ui.theme.taskItemBackgroundColor
 import com.blkxltng.to_docompose.util.RequestState
+import com.blkxltng.to_docompose.util.SearchAppBarState
 
 @Composable
 fun ListContent(
     toDoTaskList: RequestState<List<ToDoTask>>,
+    searchedTasks: RequestState<List<ToDoTask>>,
+    searchAppBarState: SearchAppBarState,
     navigateToTaskScreen: (taskId: Int) -> Unit
 ) {
-    if (toDoTaskList is RequestState.Success) {
-        if (toDoTaskList.data.isEmpty()) {
-            EmptyContent()
-        } else {
-            DisplayTasks(
-                toDoTaskList = toDoTaskList.data,
+    if (searchAppBarState == SearchAppBarState.TRIGGERED) {
+        if (searchedTasks is RequestState.Success) {
+            HandleListContent(
+                tasks = searchedTasks.data,
                 navigateToTaskScreen = navigateToTaskScreen
             )
         }
+    } else {
+        if (toDoTaskList is RequestState.Success) {
+            HandleListContent(
+                tasks = toDoTaskList.data,
+                navigateToTaskScreen = navigateToTaskScreen
+            )
+        }
+    }
+}
+
+@Composable
+fun HandleListContent(
+    tasks: List<ToDoTask>,
+    navigateToTaskScreen: (taskId: Int) -> Unit
+) {
+    if (tasks.isEmpty()) {
+        EmptyContent()
+    } else {
+        DisplayTasks(
+            toDoTaskList = tasks,
+            navigateToTaskScreen = navigateToTaskScreen
+        )
     }
 }
 

@@ -17,4 +17,5 @@
     <string name="drop_down_arrow_icon">Drop-Down Arrow Icon</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
+    <string name="empty_fields">Title and/or description fields empty</string>
 </resources>
