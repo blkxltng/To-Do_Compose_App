@@ -24,4 +24,6 @@
     <string name="alert_dialog_delete_task_confirmation">Are you sure you want to remove the task, \'%1$s\'?</string>
     <string name="alert_dialog_delete_all_tasks">Remove All Tasks?</string>
     <string name="alert_dialog_delete_all_tasks_confirmation">Are you sure you want to remove the all tasks? This cannot be undone.</string>
+    <string name="splash_screen_image">Splash Screen Logo</string>
+    <string name="splash_screen_logo_text">TODO</string>
 </resources>

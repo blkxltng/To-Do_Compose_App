@@ -1,7 +1,5 @@
 package com.blkxltng.to_docompose.util
 
-import android.app.DownloadManager.Request
-
 sealed class RequestState<out T> {
     object Idle : RequestState<Nothing>()
     object Loading : RequestState<Nothing>()
