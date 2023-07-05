@@ -1,7 +1,5 @@
 package com.blkxltng.to_docompose.ui.screens.list
 
-import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -10,11 +8,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
-import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import com.blkxltng.to_docompose.R
 import com.blkxltng.to_docompose.ui.viewmodels.SharedViewModel
 import com.blkxltng.to_docompose.util.Action
@@ -34,16 +30,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
+    action: Action,
     navigateToTaskScreen: (Int) -> Unit,
     sharedViewModel: SharedViewModel
 ) {
 
-    LaunchedEffect(key1 = true) {
-        sharedViewModel.getAllTasks()
-        sharedViewModel.readSortState()
+    LaunchedEffect(key1 = action) {
+        sharedViewModel.handleDatabaseActions(action = action)
     }
 
-    val action by sharedViewModel.action
 
     val allTasks by sharedViewModel.allTasks.collectAsState()
     val searchedTasks by sharedViewModel.searchedTasks.collectAsState()
@@ -51,18 +46,18 @@ fun ListScreen(
     val lowPriorityTasks by sharedViewModel.lowPriorityTasks.collectAsState()
     val highPriorityTasks by sharedViewModel.highPriorityTasks.collectAsState()
 
-    val searchAppBarState: SearchAppBarState by sharedViewModel.searchAppBarState
-    val searchTextState: String by sharedViewModel.searchTextState
+    val searchAppBarState: SearchAppBarState = sharedViewModel.searchAppBarState
+    val searchTextState: String = sharedViewModel.searchTextState
     
     val snackbarHostState = remember { SnackbarHostState() }
 
     DisplaySnackBar(
         snackBarHostState = snackbarHostState,
-        handleDatabaseActions = { sharedViewModel.handleDatabaseActions(action = action) },
-        taskTitle = sharedViewModel.title.value,
+        onComplete = { sharedViewModel.updateAction(it) },
+        taskTitle = sharedViewModel.title,
         action = action,
         onUndoClicked = {
-            sharedViewModel.action.value = it
+            sharedViewModel.updateAction(it)
         }
     )
 
@@ -84,7 +79,12 @@ fun ListScreen(
                     navigateToTaskScreen = navigateToTaskScreen,
                     lowPriorityTasks = lowPriorityTasks,
                     highPriorityTasks = highPriorityTasks,
-                    sortState = sortState
+                    sortState = sortState,
+                    onSwipeToDelete = { action, task ->
+                        sharedViewModel.updateAction(action)
+                        sharedViewModel.updateTaskFields(selectedTask = task)
+                        snackbarHostState.currentSnackbarData?.dismiss()
+                    }
                 )
             }
         },
@@ -112,20 +112,20 @@ fun ListFab(
 @Composable
 fun DisplaySnackBar(
     snackBarHostState: SnackbarHostState,
-    handleDatabaseActions: () -> Unit,
+    onComplete: (Action) -> Unit,
     taskTitle: String,
     action: Action,
     onUndoClicked: (Action) -> Unit
 ) {
-    handleDatabaseActions()
-    
+
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = action) {
         if (action != Action.NO_ACTION) {
             scope.launch { 
                 val snackbarResult = snackBarHostState.showSnackbar(
                     message = setMessage(action = action, taskTitle = taskTitle),
-                    actionLabel = setActionLabel(action = action)
+                    actionLabel = setActionLabel(action = action),
+                    duration = SnackbarDuration.Short
                 )
                 undoDeletedTask(
                     action = action,
@@ -133,6 +133,7 @@ fun DisplaySnackBar(
                     onUndoClicked = onUndoClicked
                 )
             }
+            onComplete(Action.NO_ACTION)
         }
     }
 }

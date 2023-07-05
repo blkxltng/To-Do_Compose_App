@@ -24,9 +24,7 @@ import com.blkxltng.to_docompose.R
 import com.blkxltng.to_docompose.components.DisplayAlertDialog
 import com.blkxltng.to_docompose.data.models.Priority
 import com.blkxltng.to_docompose.data.models.ToDoTask
-import com.blkxltng.to_docompose.ui.theme.topAppBarContentColor
 import com.blkxltng.to_docompose.util.Action
-import java.io.Closeable
 
 @Composable
 fun TaskAppBar(
